@@ -1,20 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import UserProfileSetup from './UserProfileSetup';
+import generateWorkoutRoutine from './WorkoutGenerator';
+import WorkoutPlan from './WorkoutPlan';
 
-export default function App() {
+const App = () => {
+  const [currentScreen, setCurrentScreen] = useState('UserProfileSetup');
+  const [userProfile, setUserProfile] = useState(null);
+  const [workoutRoutine, setWorkoutRoutine] = useState([]);
+
+  const handleProfileSubmit = (profile) => {
+    setUserProfile(profile);
+    const routine = generateWorkoutRoutine(profile, ['dumbbells', 'resistance bands']); // Example equipment list
+    setWorkoutRoutine(routine);
+    setCurrentScreen('WorkoutPlan');
+  };
+
+  const handleBack = () => {
+    setCurrentScreen('UserProfileSetup');
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {currentScreen === 'UserProfileSetup' && <UserProfileSetup onSubmit={handleProfileSubmit} />}
+      {currentScreen === 'WorkoutPlan' && <WorkoutPlan routine={workoutRoutine} onBack={handleBack} />}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
 });
+
+export default App;
